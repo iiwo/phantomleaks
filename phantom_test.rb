@@ -126,8 +126,13 @@ while true do
 
   session = TestSession.setup_capybara
   url  = TEST_URLS.sample
-  session.visit "https://#{url}"
-  session.driver.quit
+  begin
+    session.visit "https://#{url}"
+  rescue Capybara::Poltergeist::StatusFailError, Capybara::CapybaraError
+    logger.error("failed to load : #{url}")
+  ensure
+    session.driver.quit
+  end
   i += 1
   logger.error("#{i} : #{url}")
 end
